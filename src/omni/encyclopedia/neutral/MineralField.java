@@ -12,11 +12,6 @@ public class MineralField extends Entity {
         amount = unit.getResources();
     }
 
-    @Override
-    public String getClassType() {
-        return "MineralField";
-    }
-
     public int getAmountGathering() {
         return amountGathering;
     }

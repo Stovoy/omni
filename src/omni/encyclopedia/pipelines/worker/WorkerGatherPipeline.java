@@ -2,10 +2,11 @@ package omni.encyclopedia.pipelines.worker;
 
 import bwapi.UnitType;
 import omni.encyclopedia.Entity;
-import omni.encyclopedia.Minerals;
 import omni.encyclopedia.actions.GatherAction;
 import omni.encyclopedia.generic.Worker;
+import omni.encyclopedia.map.OmniMap;
 import omni.encyclopedia.neutral.MineralField;
+import omni.encyclopedia.self.Self;
 import omni.flow.*;
 import omni.flow.scoring.DistanceScore;
 
@@ -14,11 +15,11 @@ import java.util.List;
 
 public class WorkerGatherPipeline extends Pipeline {
     @Override
-    protected List<Potential> getPotentials(List<Entity> entities, Minerals minerals) {
+    protected List<Potential> getPotentials(List<Entity> entities, Self self, OmniMap map) {
         List<Worker> workers = new ArrayList<>();
         List<Worker> gatheringWorkers = new ArrayList<>();
         for (Entity entity : entities) {
-            if (entity.getClassType().equals("Worker")) {
+            if (entity instanceof Worker) {
                 Worker worker = (Worker) entity;
                 if (worker.isIdle()) {
                     // TODO: Eventually need to use non-idle workers too (like moving workers on oversatured mineral patches.)

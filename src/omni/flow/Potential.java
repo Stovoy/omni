@@ -34,9 +34,6 @@ public class Potential implements Comparable<Potential> {
     }
 
     public List<Resource> getUtilizedResources() {
-        if (utilizedResources.size() == 0) {
-            throw new AssertionError();
-        }
         return utilizedResources;
     }
 

@@ -2,6 +2,8 @@ package omni.encyclopedia;
 
 import bwapi.UnitType;
 import omni.encyclopedia.neutral.*;
+import omni.encyclopedia.zerg.structure.Hatchery;
+import omni.encyclopedia.zerg.structure.SpawningPool;
 import omni.encyclopedia.zerg.unit.*;
 
 import java.util.HashMap;
@@ -135,7 +137,7 @@ public class Mapping {
         // unitTypeEntityMap.put(UnitType.Zerg_Queen, OmniUnitType.Type.Queen);
         // unitTypeEntityMap.put(UnitType.Zerg_Scourge, OmniUnitType.Type.Scourge);
         // unitTypeEntityMap.put(UnitType.Zerg_Ultralisk, OmniUnitType.Type.Ultralisk);
-        // unitTypeEntityMap.put(UnitType.Zerg_Zergling, OmniUnitType.Type.Zergling);
+        unitTypeEntityMap.put(UnitType.Zerg_Zergling, Zergling.class);
     }
 
     private static void addZergBuildings() {
@@ -144,14 +146,14 @@ public class Mapping {
         // unitTypeEntityMap.put(UnitType.Zerg_Evolution_Chamber, Type.EvolutionChamber);
         // unitTypeEntityMap.put(UnitType.Zerg_Extractor, Type.Extractor);
         // unitTypeEntityMap.put(UnitType.Zerg_Greater_Spire, Type.GreaterSpire);
-        // unitTypeEntityMap.put(UnitType.Zerg_Hatchery, Hatchery.class);
+        unitTypeEntityMap.put(UnitType.Zerg_Hatchery, Hatchery.class);
         // unitTypeEntityMap.put(UnitType.Zerg_Hive, Type.Hive);
         // unitTypeEntityMap.put(UnitType.Zerg_Hydralisk_Den, Type.HydraliskDen);
         // unitTypeEntityMap.put(UnitType.Zerg_Infested_Command_Center, Type.InfestedCommandCenter);
         // unitTypeEntityMap.put(UnitType.Zerg_Lair, Type.Lair);
         // unitTypeEntityMap.put(UnitType.Zerg_Nydus_Canal, Type.NydusCanal);
         // unitTypeEntityMap.put(UnitType.Zerg_Queens_Nest, Type.QueensNest);
-        // unitTypeEntityMap.put(UnitType.Zerg_Spawning_Pool, Type.SpawningPool);
+        unitTypeEntityMap.put(UnitType.Zerg_Spawning_Pool, SpawningPool.class);
         // unitTypeEntityMap.put(UnitType.Zerg_Spire, Type.Spire);
         // unitTypeEntityMap.put(UnitType.Zerg_Spore_Colony, Type.SporeColony);
         // unitTypeEntityMap.put(UnitType.Zerg_Sunken_Colony, Type.SunkenColony);

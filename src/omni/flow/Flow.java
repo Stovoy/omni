@@ -1,10 +1,12 @@
 package omni.flow;
 
+import bwapi.Player;
 import bwapi.Unit;
 import omni.encyclopedia.Entity;
-import omni.encyclopedia.Minerals;
-import omni.encyclopedia.pipelines.worker.BuildWorkerPipeline;
-import omni.encyclopedia.pipelines.worker.WorkerGatherPipeline;
+import omni.encyclopedia.map.OmniMap;
+import omni.encyclopedia.pipelines.worker.*;
+import omni.encyclopedia.self.Minerals;
+import omni.encyclopedia.self.Self;
 import omni.flow.scoring.AggregateScore;
 
 import java.util.*;
@@ -12,18 +14,24 @@ import java.util.*;
 public class Flow {
     // TODO: Better way to represent all information.
     //  Entities + self + partial information about enemies + map info.
-    private Minerals minerals;
+    private Self self;
+    private OmniMap map;
     private List<Entity> entities;
     private List<Pipeline> pipelines;
 
-    public Flow(Minerals minerals) {
-        this.minerals = minerals;
+    public Flow(Player self, OmniMap map) {
+        this.self = new Self(self);
+        this.map = map;
 
         entities = new ArrayList<>();
 
         pipelines = new ArrayList<>();
+        pipelines.add(new AttackPipeline());
+        pipelines.add(new BuildOverlordPipeline());
+        pipelines.add(new BuildSpawningPoolPipeline());
+        pipelines.add(new BuildZerglingPipeline());
         pipelines.add(new WorkerGatherPipeline());
-        pipelines.add(new BuildWorkerPipeline());
+        // pipelines.add(new BuildWorkerPipeline()); Who needs workers?
     }
 
     public void addEntity(Entity entity) {
@@ -44,7 +52,7 @@ public class Flow {
     }
 
     public void execute() {
-        minerals.update();
+        self.update();
         for (Entity entity : entities) {
             entity.update();
         }
@@ -53,15 +61,20 @@ public class Flow {
         List<Potential> potentials = new ArrayList<>();
         for (Pipeline pipeline : pipelines) {
             potentials.addAll(
-                    pipeline.getPotentials(entities, minerals));
+                    pipeline.getPotentials(entities, self, map));
         }
 
         Map<String, List<Potential>> resourceKeyToPotentials = new HashMap<>();
         Map<String, Map<String, Resource>> resourceGroups = new HashMap<>();
 
+        List<Potential> potentialsToUse = new ArrayList<>();
         for (Potential potential : potentials) {
-            Map<String, Resource> resourceGroup = new HashMap<>();
+            if (potential.getUtilizedResources().size() == 0) {
+                potentialsToUse.add(potential);  // TODO: Do we ever really need this logic?
+                continue;
+            }
 
+            Map<String, Resource> resourceGroup = new HashMap<>();
             for (Resource resource : potential.getUtilizedResources()) {
                 String resourceKey = resource.getID();
                 resourceGroup.put(resourceKey, resource);
@@ -87,7 +100,6 @@ public class Flow {
             }
         }
 
-        List<Potential> potentialsToUse = new ArrayList<>();
         for (Map<String, Resource> resourceGroup : resourceGroups.values()) {
             if (resourceGroup.size() == 1) {
                 // Only one resource that these contest over.

@@ -8,16 +8,11 @@ import omni.flow.Resource;
 public abstract class Entity implements Resource {
     protected Unit unit;
 
-    private Position position;
     private String unitType;
-    private String classType;
 
     public void setUnit(Unit unit) {
         this.unit = unit;
-
-        position = unit.getPosition();
         unitType = getUnitTypeString();
-        classType = getClassType();
     }
 
     public Unit getUnit() {
@@ -28,10 +23,7 @@ public abstract class Entity implements Resource {
         return Mapping.getUnitTypeForEntity(getClass());
     }
 
-    public void update() {
-        // TODO: Don't do this for stationary entities.
-        position = unit.getPosition();
-    }
+    public void update() {}
 
     @Override
     public String getID() {
@@ -43,6 +35,4 @@ public abstract class Entity implements Resource {
                 replaceAll("_", "").
                 replaceAll("Zerg|Terran|Protoss|Resource", "");
     }
-
-    public abstract String getClassType();
 }

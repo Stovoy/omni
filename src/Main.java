@@ -1,14 +1,18 @@
 import bwapi.*;
 import bwapi.Flag.Enum;
 import bwta.BWTA;
+import bwta.BaseLocation;
 import omni.encyclopedia.Entity;
 import omni.encyclopedia.Mapping;
 import omni.encyclopedia.EntityFactory;
-import omni.encyclopedia.Minerals;
+import omni.encyclopedia.map.Base;
+import omni.encyclopedia.map.OmniMap;
 import omni.flow.Flow;
 
 import java.io.IOException;
 import java.lang.Error;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends DefaultBWListener {
     private Mirror mirror = new Mirror();
@@ -17,8 +21,16 @@ public class Main extends DefaultBWListener {
     private Flow flow;
     private EntityFactory entityFactory;
 
+    private boolean dev = false;
+
+    public Main(boolean dev) {
+        this.dev = dev;
+    }
+
     private void run() {
-        runStarcraftWrapper();
+        if (dev) {
+            runStarcraftWrapper();
+        }
 
         mirror.getModule().setEventListener(this);
         mirror.startGame();
@@ -35,24 +47,31 @@ public class Main extends DefaultBWListener {
     @Override
     public void onStart() {
         game = mirror.getGame();
-        game.setLocalSpeed(30);
-        game.enableFlag(Enum.UserInput.getValue());
-
-        Minerals minerals = new Minerals();
-        // TODO: Should I do this in the constructor?
-        minerals.setSelf(game.self());
-
-        flow = new Flow(minerals);
-        entityFactory = new EntityFactory(Mapping.getUnitTypeEntityMap());
+        if (dev) {
+            game.setLocalSpeed(30);
+            game.enableFlag(Enum.UserInput.getValue());
+        }
 
         // Use BWTA to analyze map. TODO: Switch to OmniMap.
         System.out.println("Analyzing map...");
         BWTA.readMap();
         BWTA.analyze();
         System.out.println("Map data ready");
+
+        List<Base> bases = new ArrayList<>();
+        for (BaseLocation baseLocation : BWTA.getStartLocations()) {
+            bases.add(new Base(
+                    baseLocation.getRegion().getPolygon().getCenter()));
+        }
+
+        OmniMap map = new OmniMap(bases);
+
+        flow = new Flow(game.self(), map);
+        entityFactory = new EntityFactory(Mapping.getUnitTypeEntityMap());
     }
 
     private int frame = 0;
+
     @Override
     public void onFrame() {
         long last = System.currentTimeMillis();
@@ -63,7 +82,9 @@ public class Main extends DefaultBWListener {
             e.printStackTrace();
         } finally {
             long now = System.currentTimeMillis();
-            System.out.format("%d: Took %d ms.\n", frame++, (now - last));
+            if (dev) {
+                System.out.format("%d: Took %d ms.\n", frame++, (now - last));
+            }
         }
     }
 
@@ -89,6 +110,10 @@ public class Main extends DefaultBWListener {
     }
 
     public static void main(String[] args) {
-        new Main().run();
+        boolean dev = false;
+        if (args.length == 1 && args[0].equals("--dev")) {
+            dev = true;
+        }
+        new Main(dev).run();
     }
 }
