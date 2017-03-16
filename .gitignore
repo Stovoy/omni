@@ -1,0 +1,11 @@
+.classpath
+.project
+.settings/
+bwapi-*
+*.dll
+lib/
+bin/
+*jar
+*.iml
+.idea/
+MANIFEST.MF
