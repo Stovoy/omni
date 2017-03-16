@@ -5,7 +5,7 @@ import omni.flow.scoring.Score;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Potential {
+public class Potential implements Comparable<Potential> {
     private Score score;
     private Action action;
     private List<Resource> utilizedResources;
@@ -38,5 +38,10 @@ public class Potential {
             throw new AssertionError();
         }
         return utilizedResources;
+    }
+
+    @Override
+    public int compareTo(Potential o) {
+        return Integer.compare(score.get(), o.score.get());
     }
 }

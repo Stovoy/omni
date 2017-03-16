@@ -11,8 +11,6 @@ public class GatherAction extends EntityToEntityAction {
 
     @Override
     public void execute() {
-        System.out.println(
-                String.format("%s gathering from %s", source.getID(), destination.getID()));
         source.getUnit().gather(destination.getUnit());
     }
 }

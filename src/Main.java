@@ -52,12 +52,18 @@ public class Main extends DefaultBWListener {
         System.out.println("Map data ready");
     }
 
+    private int frame = 0;
     @Override
     public void onFrame() {
+        long last = System.currentTimeMillis();
+
         try {
             flow.execute();
         } catch (Error | Exception e) {
             e.printStackTrace();
+        } finally {
+            long now = System.currentTimeMillis();
+            System.out.format("%d: Took %d ms.\n", frame++, (now - last));
         }
     }
 

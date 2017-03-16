@@ -29,19 +29,19 @@ public class WorkerGatherPipeline extends Pipeline {
             }
         }
 
+        // TODO: Figure out mineral locking. Need to be aware of base destruction / mineral field deplation.
         List<MineralField> mineralFields = new ArrayList<>();
         for (Entity entity : entities) {
             if (entity.getUnitType() == UnitType.Resource_Mineral_Field) {
                 MineralField mineralField = (MineralField) entity;
 
-                // TODO: Improve this.
+                // TODO: Improve this. Lots of issues (due to the way getTarget() works and the auto-mine AI.)
                 int amountGathering = 0;
                 for (Worker worker : gatheringWorkers) {
                     if (worker.getUnit().getTarget() == null) {
-                        System.out.println(String.format("Null target for %s", worker.getID()));
                         continue;
                     }
-                    if (worker.getUnit().getTarget().equals(mineralField.getUnit())) {
+                    if (worker.getUnit().getTarget() == mineralField.getUnit()) {
                         amountGathering++;
                     }
                 }
@@ -72,9 +72,6 @@ public class WorkerGatherPipeline extends Pipeline {
                 if (distanceScore.get() == 0) {
                     continue;
                 }
-                System.out.println(
-                        String.format("Adding gather potential for worker %s, field %s",
-                            worker.getID(), mineralField.getID()));
                 Potential gatherPotential = new Potential(distanceScore,
                         new GatherAction(worker, mineralField));
                 gatherPotential.addUtilizedResource(worker);
